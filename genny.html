@@ -1,0 +1,122 @@
+<html>
+	<head>
+		<title>3js</title>
+		<style>
+			canvas { width: 100%; height: 100% }
+			html, body {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="https://rawgithub.com/mrdoob/three.js/master/build/three.js"></script>
+		<script>			
+			
+			var base = 50;
+			var ingombro = 150;
+			var amount;
+			var ghost = [];			
+			var xx = new Array();
+			var yy = new Array();
+			var cubes = new Array();			
+
+			var scene = new THREE.Scene();			
+
+			//https://www.udacity.com/course/viewer#!/c-cs291/l-158750187/m-169414761
+			//http://threejs.org/docs/#Reference/Math/Vector3
+			//http://math.hws.edu/eck/cs424/notes2013/15_Threejs_Intro.html
+
+			amount = parseInt(Math.pow(parseInt(ingombro / base), 3));
+
+			viewSize = 900;
+			aspectRatio = window.innerWidth / window.innerHeight;
+			//ortho camera(left, right, top, bottom, near, far)
+			var camera = new THREE.OrthographicCamera( 
+				-aspectRatio*viewSize / 2, aspectRatio*viewSize / 2,
+				viewSize / 2, -viewSize / 2,
+				-1000, 1000
+				);
+
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			//cube
+			var object = new THREE.CubeGeometry(base,base,base);			
+
+			//top
+			object.faces[4].color.setRGB(255,0,0);
+			object.faces[5].color.setRGB(255,0,0);
+			//right
+			object.faces[8].color.setRGB(0,255,0);
+			object.faces[9].color.setRGB(0,255,0);
+			//left
+			object.faces[2].color.setRGB(0,0,255);
+			object.faces[3].color.setRGB(0,0,255);
+
+			//not visible
+			object.faces[0].color.setRGB(255,0,0);
+			object.faces[1].color.setRGB(255,0,0);			
+			object.faces[6].color.setRGB(255,0,0);
+			object.faces[7].color.setRGB(255,0,0);			
+			object.faces[10].color.setRGB(255,0,0);
+			object.faces[11].color.setRGB(255,0,0);
+
+			var material = new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: THREE.FaceColors } );						
+
+			camera.position.z = 2;
+
+			move = new THREE.Vector3(2,3,5)			
+			normMove = move.clone();
+			normMove.normalize();
+			moveVal = move.length();	
+
+			scramble();
+			
+			//initialize cubes
+			for (var i = 0; i < amount; i++) {				
+				cube = new THREE.Mesh(object, material);								
+				scene.add(cube);					
+				//isometric rotation
+				cube.rotateX(Math.PI / 4);
+				cube.rotateY(Math.PI / 4);			
+				cubes.push(cube);													
+			};			
+			
+
+			function render() {
+				requestAnimationFrame(render);													
+				for (var i = 0; i < cubes.length; i++) {
+					cubes[i].translateOnAxis(normMove, moveVal);
+				};				
+				renderer.render(scene, camera);
+			}
+			render();
+
+			function makeCubes() {				
+			
+			}
+
+			function scramble() {	
+			  for (var i = 0; i < amount; i++) {
+			    //monte carlo baby
+			    var r = Math.random();
+			    var r1 = Math.random();   
+			    if (r < r1) {
+			      ghost[i] = true;
+			    } 
+			    else {
+			      ghost[i] = false;
+			    }
+			    //xx[i] = random((-width * 2),(width * 2));
+			    //yy[i] = random((-height * 2),(height * 2));
+			    xx[i] = 0;
+			    yy[i] = 0;
+			  }
+			  				        				 
+			}
+		</script>
+	</body>
+</html>
